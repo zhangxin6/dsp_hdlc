@@ -1,0 +1,6 @@
+eclipse.preferences.version=1
+environment/project/com.ti.ccstudio.buildDefinitions.C6000.Debug.841817208/PDK_INSTALL_PATH/delimiter=;
+environment/project/com.ti.ccstudio.buildDefinitions.C6000.Debug.841817208/PDK_INSTALL_PATH/operation=replace
+environment/project/com.ti.ccstudio.buildDefinitions.C6000.Debug.841817208/PDK_INSTALL_PATH/value=C\:\\ti\\pdk_C6678_1_1_2_5
+environment/project/com.ti.ccstudio.buildDefinitions.C6000.Debug.841817208/append=true
+environment/project/com.ti.ccstudio.buildDefinitions.C6000.Debug.841817208/appendContributed=true
