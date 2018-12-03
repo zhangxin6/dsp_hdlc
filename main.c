@@ -9,6 +9,7 @@
 /********************************************************************
  * 可修改的全局变量
  *******************************************************************/
+#define DEBUG
 //记录速度
 CSL_Uint64 average_write_speed=0;
 CSL_Uint64 average_read_speed=0;
@@ -36,24 +37,25 @@ void main(void)
     CACHE_setL1PSize(CACHE_L1_32KCACHE);
     CACHE_setL1DSize(CACHE_L1_32KCACHE);
     CACHE_setL2Size(CACHE_0KCACHE);
-    /*
-	if(C6678_EVM==gDSP_board_type)
-	{
-		//DSP core speed: 100*10/1=1000MHz
-		KeyStone_main_PLL_init(100, 10, 1); 
-	}
-	else if(TCI6614_EVM==gDSP_board_type
-		||DUAL_NYQUIST_EVM==gDSP_board_type
-		||C6670_EVM==gDSP_board_type)
-	{
-		//DSP core speed: 122.88*236/29= 999.9889655MHz
-		KeyStone_main_PLL_init(122.88, 236, 29);
-	}
-	else
-	{
-		puts("Unknown DSP board type!");
-		return;
-	}*/
+    #ifdef DEBUG
+		if(C6678_EVM==gDSP_board_type)
+		{
+			//DSP core speed: 100*10/1=1000MHz
+			KeyStone_main_PLL_init(100, 10, 1); 
+		}
+		else if(TCI6614_EVM==gDSP_board_type
+			||DUAL_NYQUIST_EVM==gDSP_board_type
+			||C6670_EVM==gDSP_board_type)
+		{
+			//DSP core speed: 122.88*236/29= 999.9889655MHz
+			KeyStone_main_PLL_init(122.88, 236, 29);
+		}
+		else
+		{
+			puts("Unknown DSP board type!");
+			return;
+		}
+	#endif
 	
 	int coreNum=0;
 	int * src_buf= (int *)EMIF16FPGA_SEND_BUF_ADDR;
@@ -62,10 +64,21 @@ void main(void)
 	if(coreNum==0)
 	{   //初始化PLL
 		if (C6678_Pll_Init(PLATFORM_PLL1_PLLM_val)!= TRUE)
-			;//printf("PLL failed to initialize!!!!!!!!!!!!!!!!!!!!!!!!! \n" );
+		{
+			#ifdef DEBUG
+				printf("PLL failed to initialize!!!!!!!!!!!!!!!!!!!!!!!!! \n" );
+			#else
+				;
+			#endif
+		}	
 	    else
-			;//printf("PLL success to initialize\n" );
-	    
+		{
+			#ifdef DEBUG
+				printf("PLL success to initialize\n" );
+			#else
+				;
+			#endif	
+		}	    
 	    C6678_Power_UpDomains();
 	    C6678_Ecc_Enable();
 	}
@@ -74,13 +87,24 @@ void main(void)
 	if(coreNum==0)
 	{	//初始化EMIF16_FPGA
 	    if (C6678_Emif16_Fpga_Init()!= TRUE)
-	    	;//printf("EMIF16_FPGA failed to initialize!!!!!!!!!!!!!!!!!!!!!!!!! \n" );
+		{
+			#ifdef DEBUG
+				printf("EMIF16_FPGA failed to initialize!!!!!!!!!!!!!!!!!!!!!!!!! \n" );
+			#else
+				;
+			#endif
+		}	
 	    else
-	    	;//printf("EMIF16_FPGA success to initialize! \n" );
+		{
+			#ifdef DEBUG
+				printf("EMIF16_FPGA success to initialize! \n" );
+			#else
+				;
+			#endif
+		}
 	}
 	
 	GPIO_init();
-
 	GPIO_Interrupts_Init();
 
 #if GPIO_LOOP_BACK_TEST
@@ -103,9 +127,12 @@ void main(void)
 		}
 	}
 #endif
-	puts("Test complete.");
+	#ifdef DEBUG
+		puts("Test complete.");
+	#else
+		;
+	#endif
 }
-
 
 //Interrupt service routine for timer
 void interrupt GPIO_ISR(void)
@@ -123,10 +150,12 @@ void interrupt GPIO_ISR(void)
 	gpCGEM_regs->EVTCLR[2]= eventFlag;
 
 	//shift the interrupt register to match the GPIO data register
-	//printf("GPIO interrupt event flag on CorePac INTC = 0x%x\n",
-	//	((eventFlag&(~(1<<(CSL_GEM_GPINTN-64))))>>(10))
-	//	|((eventFlag>>(CSL_GEM_GPINTN-64))<<DNUM));
-
+	#ifdef DEBUG
+		printf("GPIO interrupt event flag on CorePac INTC = 0x%x\n",((eventFlag&(~(1<<(CSL_GEM_GPINTN-64))))>>(10))|((eventFlag>>(CSL_GEM_GPINTN-64))<<DNUM));
+	#else
+		;
+	#endif
+	
 	length = receive_hdlc(dst_buf);
 	error =0;
 	for(i=0;i<length;i++)
@@ -134,6 +163,9 @@ void interrupt GPIO_ISR(void)
 		if(*src_buf != *dst_buf)
 			error = error + 1;
 	}
-	//printf("error = %d\n",error);
-
+	#ifdef DEBUG
+		printf("error = %d\n",error);
+	#else
+		;
+	#endif
 }
