@@ -4325,7 +4325,7 @@ void KeyStone_common_device_init()
     Modification : Created function
 *****************************************************************************/
 void KeyStone_common_CPU_init()
-{
+ {
     TSC_init();	//initialize TSC to measure cycle
 
 	/*clear all interrupt flag/status, setup ISTP to begining of LL2*/

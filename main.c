@@ -36,7 +36,7 @@ void main(void)
     CACHE_setL1PSize(CACHE_L1_32KCACHE);
     CACHE_setL1DSize(CACHE_L1_32KCACHE);
     CACHE_setL2Size(CACHE_0KCACHE);
-
+    /*
 	if(C6678_EVM==gDSP_board_type)
 	{
 		//DSP core speed: 100*10/1=1000MHz
@@ -53,7 +53,7 @@ void main(void)
 	{
 		puts("Unknown DSP board type!");
 		return;
-	}
+	}*/
 	
 	int coreNum=0;
 	int * src_buf= (int *)EMIF16FPGA_SEND_BUF_ADDR;
@@ -62,9 +62,9 @@ void main(void)
 	if(coreNum==0)
 	{   //初始化PLL
 		if (C6678_Pll_Init(PLATFORM_PLL1_PLLM_val)!= TRUE)
-			printf("PLL failed to initialize!!!!!!!!!!!!!!!!!!!!!!!!! \n" );
+			;//printf("PLL failed to initialize!!!!!!!!!!!!!!!!!!!!!!!!! \n" );
 	    else
-			printf("PLL success to initialize\n" );
+			;//printf("PLL success to initialize\n" );
 	    
 	    C6678_Power_UpDomains();
 	    C6678_Ecc_Enable();
@@ -74,9 +74,9 @@ void main(void)
 	if(coreNum==0)
 	{	//初始化EMIF16_FPGA
 	    if (C6678_Emif16_Fpga_Init()!= TRUE)
-	    	printf("EMIF16_FPGA failed to initialize!!!!!!!!!!!!!!!!!!!!!!!!! \n" );
+	    	;//printf("EMIF16_FPGA failed to initialize!!!!!!!!!!!!!!!!!!!!!!!!! \n" );
 	    else
-	    	printf("EMIF16_FPGA success to initialize! \n" );
+	    	;//printf("EMIF16_FPGA success to initialize! \n" );
 	}
 	
 	GPIO_init();
@@ -97,8 +97,8 @@ void main(void)
 				{
 					src_buf[j] = (j + 3)%256;
 				}
-				send_hdlc(512,src_buf);
-				C6678_TimeCounter_Delaycycles(10000000);
+ 				send_hdlc(9,src_buf);
+ 				C6678_TimeCounter_Delaycycles(10000000);
 			}
 		}
 	}
@@ -123,9 +123,9 @@ void interrupt GPIO_ISR(void)
 	gpCGEM_regs->EVTCLR[2]= eventFlag;
 
 	//shift the interrupt register to match the GPIO data register
-	printf("GPIO interrupt event flag on CorePac INTC = 0x%x\n",
-		((eventFlag&(~(1<<(CSL_GEM_GPINTN-64))))>>(10))
-		|((eventFlag>>(CSL_GEM_GPINTN-64))<<DNUM));
+	//printf("GPIO interrupt event flag on CorePac INTC = 0x%x\n",
+	//	((eventFlag&(~(1<<(CSL_GEM_GPINTN-64))))>>(10))
+	//	|((eventFlag>>(CSL_GEM_GPINTN-64))<<DNUM));
 
 	length = receive_hdlc(dst_buf);
 	error =0;
@@ -134,6 +134,6 @@ void interrupt GPIO_ISR(void)
 		if(*src_buf != *dst_buf)
 			error = error + 1;
 	}
-	printf("error = %d\n",error);
+	//printf("error = %d\n",error);
 
 }
