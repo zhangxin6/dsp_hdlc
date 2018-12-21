@@ -6,6 +6,7 @@
 #include "KeyStone_common.h"
 #include "gpio_z.h"
 #include "hdlc_cmu.h"
+#include "init.h"
 /********************************************************************
  * 可修改的全局变量
  *******************************************************************/
@@ -26,112 +27,30 @@ CSL_Uint64 average_read_speed=0;
 //#define GPIO_LOOP_BACK_TEST 	1
 void main(void)
 {
-	KeyStone_common_CPU_init();
-	/*print device information. 
-	Enable memory protection interrupts, EDC for MSMC RAM*/
-	KeyStone_common_device_init();
-
-	//enable exception handling
-	//KeyStone_Exception_cfg(TRUE);
-
-    CACHE_setL1PSize(CACHE_L1_32KCACHE);
-    CACHE_setL1DSize(CACHE_L1_32KCACHE);
-    CACHE_setL2Size(CACHE_0KCACHE);
-    #ifdef DEBUG
-		if(C6678_EVM==gDSP_board_type)
-		{
-			//DSP core speed: 100*10/1=1000MHz
-			KeyStone_main_PLL_init(100, 10, 1); 
-		}
-		else if(TCI6614_EVM==gDSP_board_type
-			||DUAL_NYQUIST_EVM==gDSP_board_type
-			||C6670_EVM==gDSP_board_type)
-		{
-			//DSP core speed: 122.88*236/29= 999.9889655MHz
-			KeyStone_main_PLL_init(122.88, 236, 29);
-		}
-		else
-		{
-			puts("Unknown DSP board type!");
-			return;
-		}
-	#endif
-	
+	init();
 	int coreNum=0;
 	int * src_buf= (int *)EMIF16FPGA_SEND_BUF_ADDR;
-	/* Get the core number. */
-	coreNum = CSL_chipReadReg (CSL_CHIP_DNUM);
-	if(coreNum==0)
-	{   //初始化PLL
-		if (C6678_Pll_Init(PLATFORM_PLL1_PLLM_val)!= TRUE)
-		{
-			#ifdef DEBUG
-				printf("PLL failed to initialize!!!!!!!!!!!!!!!!!!!!!!!!! \n" );
-			#else
-				;
-			#endif
-		}	
-	    else
-		{
-			#ifdef DEBUG
-				printf("PLL success to initialize\n" );
-			#else
-				;
-			#endif	
-		}	    
-	    C6678_Power_UpDomains();
-	    C6678_Ecc_Enable();
-	}
-	//使能TIMER
-	C6678_TimeCounter_Enable();
-	if(coreNum==0)
-	{	//初始化EMIF16_FPGA
-	    if (C6678_Emif16_Fpga_Init()!= TRUE)
-		{
-			#ifdef DEBUG
-				printf("EMIF16_FPGA failed to initialize!!!!!!!!!!!!!!!!!!!!!!!!! \n" );
-			#else
-				;
-			#endif
-		}	
-	    else
-		{
-			#ifdef DEBUG
-				printf("EMIF16_FPGA success to initialize! \n" );
-			#else
-				;
-			#endif
-		}
-	}
-	
-	GPIO_init();
-	GPIO_Interrupts_Init();
-
-#if GPIO_LOOP_BACK_TEST
-	GPIO_loopback_test();
-#else
-	int j;
-	if(DEVICE==DEVICE1)
-	{
-		if (coreNum ==0)
-		{
-			while(1)
-			{
-				for(j=0;j<512;j++)
-				{
-					src_buf[j] = (j + 3)%256;
-				}
- 				send_hdlc(9,src_buf);
- 				C6678_TimeCounter_Delaycycles(10000000);
-			}
-		}
-	}
-#endif
-	#ifdef DEBUG
-		puts("Test complete.");
-	#else
-		;
-	#endif
+    #if GPIO_LOOP_BACK_TEST
+        GPIO_loopback_test();
+    #else
+        int j;
+        if(DEVICE==DEVICE1)
+        {
+            if (coreNum ==0)
+            {
+                while(1)
+                {
+                    for(j=0;j<512;j++)
+                    {
+                        src_buf[j] = 255;
+                        //src_buf[j] = (j + 3)%256;
+                    }
+                    send_hdlc(500,src_buf);
+                    C6678_TimeCounter_Delaycycles(10000000);
+                }
+            }
+        }
+    #endif
 }
 
 //Interrupt service routine for timer

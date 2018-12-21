@@ -6,8 +6,9 @@
 #include "KeyStone_common.h"
 #include "gpio_z.h"
 #include "hdlc_cmu.h"
-#define ADDR_HDLC_START  0x0700001ff
-#define ADDR_HDLC_RECEIVE  0x0700001ff
+#define ADDR_HDLC_START   0x0700001ff
+#define ADDR_HDLC_RECEIVE 0x0700001ff
+
 void send_hdlc(unsigned int length, int * src_buf)
 {
 	unsigned short src_16[512];
@@ -34,7 +35,6 @@ unsigned short receive_hdlc(int * dst_buf)
 	unsigned short i,length_16,length;
 	length = *((unsigned short*) ADDR_HDLC_RECEIVE );
 	length = (length <= 512) ? length:512;
-	length = (( length & 0x00ff)<<8) + ((length & 0xff00)>>8);
 	length_16 = (length/2) + (length%2);
 	C6678_Emif16_Fpga_ReadByte(0,length_16,dst_16);
 	for(i=0;i<length/2;i++)

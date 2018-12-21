@@ -12,5 +12,5 @@
 	<createSlaveProjects value=""/>
 	<templateProperties value="id=com.ti.common.project.core.emptyProjectWithMainTemplate"/>
 	<filesToOpen value="main.c"/>
-	<origin value="C:/Users/zhang/DSP_HDLC"/>
+	<origin value="C:/Users/zhang/dsp_hdlc"/>
 </projectOptions>
