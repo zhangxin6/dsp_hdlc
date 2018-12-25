@@ -27,7 +27,7 @@ CSL_Uint64 average_read_speed=0;
 //#define GPIO_LOOP_BACK_TEST 	1
 void main(void)
 {
-	init();
+    init();
 	int coreNum=0;
 	int * src_buf= (int *)EMIF16FPGA_SEND_BUF_ADDR;
     #if GPIO_LOOP_BACK_TEST
@@ -40,12 +40,15 @@ void main(void)
             {
                 while(1)
                 {
-                    for(j=0;j<512;j++)
+                    /*for(j=0;j<512;j++)
                     {
-                        src_buf[j] = 255;
-                        //src_buf[j] = (j + 3)%256;
+                        //src_buf[j] = 255;
+                        src_buf[j] = (j + 3)%256;
                     }
-                    send_hdlc(500,src_buf);
+                    send_hdlc(500,src_buf);*/
+                    //int * dst_buf= (int *)EMIF16FPGA_RECV_BUF_ADDR;
+                    //unsigned short length;
+                    //length = receive_hdlc(dst_buf);
                     C6678_TimeCounter_Delaycycles(10000000);
                 }
             }
@@ -77,7 +80,7 @@ void interrupt GPIO_ISR(void)
 	
 	length = receive_hdlc(dst_buf);
 	error =0;
-	for(i=0;i<length;i++)
+	/*for(i=0;i<length;i++)
 	{
 		if(*src_buf != *dst_buf)
 			error = error + 1;
@@ -86,5 +89,5 @@ void interrupt GPIO_ISR(void)
 		printf("error = %d\n",error);
 	#else
 		;
-	#endif
+	#endif*/
 }
