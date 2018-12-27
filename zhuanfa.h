@@ -1,0 +1,1 @@
+int zhuanfa(int * src_buf，int * dst_buf);

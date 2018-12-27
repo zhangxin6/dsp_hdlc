@@ -13,14 +13,12 @@
 #define EMIF16FPGA_RECV_BUF_ADDR  0x0C1E0000
 void init(void)
 {
-	KeyStone_common_CPU_init();
+    KeyStone_common_CPU_init();
 	/*print device information. 
 	Enable memory protection interrupts, EDC for MSMC RAM*/
 	KeyStone_common_device_init();
-
 	//enable exception handling
 	//KeyStone_Exception_cfg(TRUE);
-
     CACHE_setL1PSize(CACHE_L1_32KCACHE);
     CACHE_setL1DSize(CACHE_L1_32KCACHE);
     CACHE_setL2Size(CACHE_0KCACHE);

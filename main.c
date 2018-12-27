@@ -44,22 +44,29 @@ void main(void)
                 if(hdlc_rec_flag == 1)
                 {
                     hdlc_rec_flag = 0;
-                    frame=frame+1;
+
                     length = receive_hdlc(dst_buf);
-                    if( (frame%3)==1 )
+                    int flag_send;
+                    flag_send=zhuanfa(dst_buf,src_buf);
+                    if(flag_send==1)
+                    {
+                        send_hdlc(202,src_buf);
+                    }
+
+                    /*if( (frame%3)==1 )
                     {
                         src_buf[0]=0x77;
                         src_buf[1]=0x22;
                         src_buf[2]=0x44;
-                        //src_buf[2]=frame/3;
+                        src_buf[2]=frame%256;
                         for(i=1;i<200;i++)
                         {
                             src_buf[i+2] = i+1 ;
                         }
                         send_hdlc(202,src_buf);
-                    }
+                    }*/
                 }
-                C6678_TimeCounter_Delaycycles(10000000);
+                //C6678_TimeCounter_Delaycycles(10000000);
             }
         }
     }
